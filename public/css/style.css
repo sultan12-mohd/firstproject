@@ -1,0 +1,11 @@
+.popup-image {
+    display: none;
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    z-index: 10;
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}

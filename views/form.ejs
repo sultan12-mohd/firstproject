@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.css" rel="stylesheet" />
+    <title>Student information</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css" media="all">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-4 mb-5">
+                <h3 class="mb-4">Add a New Item</h3>
+                <% if (itemToUpdate) { %>
+                    <form action="/update/<%= itemToUpdate._id %>" method="POST" enctype="multipart/form-data">
+                        <div class="mb-1">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= itemToUpdate.name %>" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="roll" class="form-label">Roll no:</label>
+                            <input type="text" class="form-control" id="roll" name="roll" value="<%= itemToUpdate.roll %>" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="classname" class="form-label">Class:</label>
+                            <input type="text" class="form-control" id="classname" name="classname" value="<%= itemToUpdate.classname %>" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= itemToUpdate.email %>" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="contact" class="form-label">Contact:</label>
+                            <input type="text" class="form-control" id="contact" name="contact" value="<%= itemToUpdate.contact %>" required />
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-lg-8">
+                                <label for="image" class="form-label">Image:</label>
+                                <input type="file" class="form-control" id="image" name="image" />
+                            </div>
+                            <div class="col-lg-4">
+                                <% if (itemToUpdate.image) { %>
+                                    <img src="/images/<%= itemToUpdate.image %>" alt="Item Image" class="img-thumbnail mt-2" style="width: 100px; height: 100px;" />
+                                <% } %>
+                            </div>
+                            
+                            
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Item</button>
+                    </form>
+                <% } else { %>
+                    <form action="/add" method="POST" enctype="multipart/form-data">
+                        <div class="mb-1">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="roll" class="form-label">Roll no:</label>
+                            <input type="text" class="form-control" id="roll" name="roll" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="classname" class="form-label">Class:</label>
+                            <input type="text" class="form-control" id="classname" name="classname" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required />
+                        </div>
+                        <div class="mb-1">
+                            <label for="contact" class="form-label">Contact:</label>
+                            <input type="text" class="form-control" id="contact" name="contact" required />
+                        </div>
+                        <div class="mb-1">
+                            <div class="row">
+                                <div class="col-8">
+                                    <label for="image" class="form-label">Image:</label>
+                                    <input type="file" class="form-control" id="image" name="image" onchange="PreviewImage();" />        
+                                </div>
+                                <div class="col-4">
+                                    <img id="uploadPreview" class="img-thumbnail mt-2" style="width: 100px; height: 100px;" />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </form>
+                <% } %>
+            </div>
+            <div class="col-lg-8">
+                <h3 class="mb-4">Student Data Here</h3>
+                <table class="table table-bordered table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Roll No.</th>
+                            <th scope="col">Class</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider table-divider-color">
+                        <% if (errorMessage) { %>
+                            <tr>
+                                <td colspan="7" class="text-danger"><%= errorMessage %></td>
+                            </tr>
+                        <% } %>
+                        <% if (items.length > 0) { %>
+                            <% items.forEach(item => { %>
+                                <tr class="row-hover" data-image="<%= item.image ? '/images/' + item.image : '' %>">
+                                    <td><%= item.name %></td>
+                                    <td><%= item.roll %></td>
+                                    <td><%= item.classname %></td>
+                                    <td><%= item.email %></td>
+                                    <td><%= item.contact %></td>
+                                    <td class="d-flex">
+                                        <a href="/update/<%= item._id %>" class="btn btn-sm btn-warning me-2">Edit</a>
+                                        <form action="/delete/<%= item._id %>" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                            <tr>
+                                <td colspan="7">
+                                    <a href="/download/csv"  class="btn btn-success"><i class="fa-solid fa-download" ></i> Download Student Data</a>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <img id="popupImage" class="popup-image" src="" alt="Popup Image">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>
+    <script>
+        function PreviewImage() {
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(document.getElementById("image").files[0]);
+
+            oFReader.onload = function (oFREvent) {
+                document.getElementById("uploadPreview").src = oFREvent.target.result;
+            };
+        }
+
+        const rows = document.querySelectorAll('.row-hover');
+        const popupImage = document.getElementById('popupImage');
+        const offset = 15; // Offset value in pixels
+
+        rows.forEach(row => {
+            row.addEventListener('mouseover', (e) => {
+                const imageUrl = row.getAttribute('data-image');
+                if (imageUrl) {
+                    popupImage.src = imageUrl;
+                    popupImage.style.display = 'block';
+                    popupImage.style.top = (e.pageY + offset) + 'px';
+                    popupImage.style.left = (e.pageX + offset) + 'px';
+                }
+            });
+
+            row.addEventListener('mousemove', (e) => {
+                popupImage.style.top = (e.pageY + offset) + 'px';
+                popupImage.style.left = (e.pageX + offset) + 'px';
+            });
+
+            row.addEventListener('mouseout', () => {
+                popupImage.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>
